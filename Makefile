@@ -17,14 +17,20 @@ CFLAGS  += -Wl,-z,noexecstack
 
 INCLUDES = -I src/include
 
-SRCS    =   main.c                          \
-            src/module/args/check_args.c    \
-            src/module/args/parse_args.c    \
-            src/module/args/free_args.c     \
-            src/module/utils/ft_calloc.c    \
-            src/module/utils/ft_realloc.c   \
-            src/module/utils/ft_strcmp.c    \
-            src/module/utils/ft_strlen.c    \
+SRCS    =   main.c                              \
+            src/module/args/check_args.c        \
+            src/module/args/parse_args.c        \
+            src/module/args/free_args.c         \
+            src/module/serialize/serialize_bytes.c \
+            src/module/serialize/serialize.c    \
+            src/module/md5/md5_init.c           \
+            src/module/md5/md5_padding.c        \
+            src/module/md5/md5_process.c        \
+            src/module/md5/md5_final.c          \
+            src/module/utils/ft_calloc.c        \
+            src/module/utils/ft_realloc.c       \
+            src/module/utils/ft_strcmp.c        \
+            src/module/utils/ft_strlen.c        \
             src/module/utils/print.c
 
 OBJS_DIR = objs
