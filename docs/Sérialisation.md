@@ -170,7 +170,83 @@ typedef struct  s_sha512_ctx
 
 // SHA-256 / SHA-512
 # define SHA256_H0(ctx) (ctx)->h[0]
-// ... H1 à H7
+# define SHA256_H1(ctx) (ctx)->h[1]
+# define SHA256_H2(ctx) (ctx)->h[2]
+# define SHA256_H3(ctx) (ctx)->h[3]
+# define SHA256_H4(ctx) (ctx)->h[4]
+# define SHA256_H5(ctx) (ctx)->h[5]
+# define SHA256_H6(ctx) (ctx)->h[6]
+# define SHA256_H7(ctx) (ctx)->h[7]
+```
+
+---
+
+## Les macros — pourquoi et comment
+
+### Le problème sans macros
+
+Dans l'algorithme MD5, les registres A B C D apparaissent des dizaines de fois.
+Sans macros le code devient illisible et ne correspond plus à la documentation :
+
+```c
+// illisible — indices sans signification
+ctx->a[0] = ctx->a[1] + ROTATE(
+    ctx->a[0] + F(ctx->a[1], ctx->a[2], ctx->a[3]) + M[i] + T[i], s);
+```
+
+### Avec macros — correspond à la spec MD5
+
+```c
+// lisible — correspond exactement à la documentation officielle
+MD5_A(ctx) = MD5_B(ctx) + ROTATE(
+    MD5_A(ctx) + F(MD5_B(ctx), MD5_C(ctx), MD5_D(ctx)) + M[i] + T[i], s);
+```
+
+### Les 3 raisons d'utiliser les macros
+
+**1. Lisibilité**
+Le code correspond mot pour mot à la documentation officielle MD5/SHA.
+Un relecteur peut vérifier l'implémentation directement contre la spec.
+
+**2. Maintenabilité**
+Si la structure interne change, on modifie uniquement la macro :
+```c
+// avant
+# define MD5_A(ctx)  (ctx)->a[0]
+
+// après changement de structure — une seule ligne à modifier
+# define MD5_A(ctx)  (ctx)->regs[0]
+```
+
+**3. Sécurité**
+Le ctx est passé en paramètre de la macro — le compilateur vérifie le type :
+```c
+// DANGEREUX — suppose que la variable s'appelle toujours "ctx"
+# define MD5_A   ctx->a[0]
+
+// SÛR — fonctionne peu importe le nom de la variable
+# define MD5_A(ctx)   (ctx)->a[0]
+```
+
+### Pourquoi pas des variables locales
+
+Une alternative serait de copier les registres en variables locales :
+```c
+uint32_t a = ctx->a[0];
+uint32_t b = ctx->a[1];
+uint32_t c = ctx->a[2];
+uint32_t d = ctx->a[3];
+// ... algo ...
+// resynchronisation obligatoire à la fin
+ctx->a[0] = a;
+ctx->a[1] = b;
+ctx->a[2] = c;
+ctx->a[3] = d;  // ← risque d'oublier → bug silencieux
+```
+
+Avec les macros on travaille **directement** sur le ctx :
+```
+pas de copie → pas de synchro → pas de risque d'oubli
 ```
 
 ---
