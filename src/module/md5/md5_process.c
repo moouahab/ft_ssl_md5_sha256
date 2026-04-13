@@ -8,11 +8,12 @@ static void     clear_block(t_md5_ctx *ctx, int i)
     clear_block(ctx, i + 1);
 }
 
-void            md5_process(t_md5_ctx *ctx)
+int            md5_process(t_md5_ctx *ctx)
 {
     if (!ctx)
-        return ;
+        return (0);
     md5_transform(ctx);
     clear_block(ctx, 0);
     ctx->used = 0;
+    return (1);
 }

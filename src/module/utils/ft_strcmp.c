@@ -2,10 +2,17 @@
 
 static int  find_diff(uint64_t w1, uint64_t w2, int byte)
 {
+    uint8_t     b1;
+    uint8_t     b2;
+
     if (byte >= 8)
         return (0);
-    if (((w1 >> (byte * 8)) & 0xFF) != ((w2 >> (byte * 8)) & 0xFF))
-        return (((w1 >> (byte * 8)) & 0xFF) - ((w2 >> (byte * 8)) & 0xFF));
+    b1 = (w1 >> (byte * 8)) & 0xFF;
+    b2 = (w2 >> (byte * 8)) & 0xFF;
+    if (b1 != b2)
+        return (b1 - b2);
+    if (b1 == '\0')
+        return (0);
     return (find_diff(w1, w2, byte + 1));
 }
 
@@ -32,9 +39,11 @@ static int  cmp_head(const char *s1, const char *s2)
     return (cmp_head(s1 + 1, s2 + 1));
 }
 
+
+
 int     ft_strcmp(const char *s1, const char *s2)
 {
-    if (!((unsigned long)s1 % 8) && !((unsigned long)s2 % 8))
-        return (cmp_aligned(s1, s2));
+    if (!s1 || !s2)
+        return (s1 == s2 ? 0 : s1 ? 1 : -1);
     return (cmp_head(s1, s2));
 }

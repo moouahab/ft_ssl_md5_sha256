@@ -16,20 +16,29 @@ CFLAGS  += -Wl,-z,noexecstack
 
 INCLUDES = -I src/include
 
-SRCS    =   main.c                                  \
-            src/module/args/check_args.c            \
-            src/module/args/parse_args.c            \
-            src/module/args/free_args.c             \
-            src/module/serialize/serialize_bytes.c  \
-            src/module/serialize/serialize.c        \
-            src/module/md5/md5_init.c               \
-            src/module/md5/md5_padding.c            \
-            src/module/md5/md5_process.c            \
-            src/module/md5/md5_final.c              \
-            src/module/utils/ft_calloc.c            \
-            src/module/utils/ft_realloc.c           \
-            src/module/utils/ft_strcmp.c            \
-            src/module/utils/ft_strlen.c            \
+SRCS    =   main.c                                      \
+            src/module/args/check_args.c                \
+            src/module/args/parse_args.c                \
+            src/module/args/free_args.c                 \
+            src/module/serialize/serialize_bytes.c      \
+            src/module/serialize/serialize.c            \
+            src/module/md5/md5_init.c                   \
+            src/module/md5/md5_padding.c                \
+            src/module/md5/md5_process.c                \
+            src/module/md5/md5_transform.c              \
+            src/module/md5/md5.c                        \
+            src/module/input/input_from_string.c        \
+            src/module/input/input_from_fd.c            \
+            src/module/input/input_from_stdin.c         \
+            src/module/input/free_input.c               \
+            src/module/algohash/algo_md5.c              \
+            src/module/algohash/dispatch.c              \
+            src/module/algohash/run_hash.c              \
+            src/module/algohash/display_hash.c          \
+            src/module/utils/ft_calloc.c                \
+            src/module/utils/ft_realloc.c               \
+            src/module/utils/ft_strcmp.c                \
+            src/module/utils/ft_strlen.c                \
             src/module/utils/print.c
 
 OBJS_DIR = objs
