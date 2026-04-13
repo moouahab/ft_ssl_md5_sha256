@@ -16,6 +16,8 @@ static void     write_label(uint8_t *data, uint64_t size, char *buf, int buf_siz
 
     i = 0;
     j = 0;
+    if (size > 0 && data[size - 1] == '\n')
+        size--;       
     while (i < size && j < buf_size - 3)
     {
         if (data[i] == '\n')
@@ -34,7 +36,6 @@ static void     write_label(uint8_t *data, uint64_t size, char *buf, int buf_siz
     }
     buf[j] = '\0';
 }
-
 
 static void     print_stdin(t_display *disp, char *hash)
 {
