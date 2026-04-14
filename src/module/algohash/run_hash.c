@@ -68,6 +68,12 @@ static void     display_stdin_hash(t_display *disp,
         ft_putstr("\n", 1);
         return ;
     }
+    if (disp->reverse)
+    {
+        ft_putstr(hash, 1);
+        ft_putstr(" (stdin)\n", 1);
+        return ;
+    }
     print_stdin(disp, hash);
 }
 

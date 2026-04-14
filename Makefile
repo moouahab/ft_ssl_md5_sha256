@@ -27,11 +27,17 @@ SRCS    =   main.c                                      \
             src/module/md5/md5_process.c                \
             src/module/md5/md5_transform.c              \
             src/module/md5/md5.c                        \
+            src/module/sha256/sha256_init.c             \
+            src/module/sha256/sha256_transform.c        \
+            src/module/sha256/sha256_process.c          \
+            src/module/sha256/sha256_padding.c          \
+            src/module/sha256/sha256.c                  \
             src/module/input/input_from_string.c        \
             src/module/input/input_from_fd.c            \
             src/module/input/input_from_stdin.c         \
             src/module/input/free_input.c               \
             src/module/algohash/algo_md5.c              \
+            src/module/algohash/algo_sha256.c           \
             src/module/algohash/dispatch.c              \
             src/module/algohash/run_hash.c              \
             src/module/algohash/display_hash.c          \

@@ -46,11 +46,6 @@ void            display_hash(t_display *disp, char *hash,
         return ;
     if (disp->quiet)
     {
-        // if (disp->print_stdin)
-        // {
-        //     write(1, label, ft_strlen(label));
-        //     write(1, "\n", 1);
-        // }
         ft_putstr(hash, 1);
         ft_putstr("\n", 1);
         return ;

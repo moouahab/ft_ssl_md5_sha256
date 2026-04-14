@@ -2,6 +2,7 @@
 
 static const t_hasher   hashers[] = {
     { "md5",    "MD5",    compute_md5 },
+    { "sha256", "SHA2-256", compute_sha256 },
     { NULL,     NULL,     NULL        }
 };
 
