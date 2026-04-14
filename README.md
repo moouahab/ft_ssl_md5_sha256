@@ -227,3 +227,4 @@ SHA256 : 45/45 tests passent contre OpenSSL ✓
 ## Auteur
 
 Projet 42 — ft_ssl [md5] [sha256]
+Mohamed Ouahab
