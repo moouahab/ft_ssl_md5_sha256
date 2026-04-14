@@ -1,12 +1,18 @@
 #include <stdlib.h>
 #include "utils.h"
 
-static void     copy_bytes(char *src, char *dst, int size)
+void    copy_bytes(uint8_t *dst, uint8_t *src, int size)
 {
-    if (size <= 0)
+    if (!dst || !src || size <= 0)
         return ;
+    if (size >= 8 && !((unsigned long)dst % 8) && !((unsigned long)src % 8))
+    {
+        *(uint64_t *)dst = *(uint64_t *)src;
+        copy_bytes(dst + 8, src + 8, size - 8);
+        return ;
+    }
     *dst = *src;
-    copy_bytes(src + 1, dst + 1, size - 1);
+    copy_bytes(dst + 1, src + 1, size - 1);
 }
 
 void    *ft_realloc(void *ptr, int old_size, int new_size)
@@ -24,7 +30,7 @@ void    *ft_realloc(void *ptr, int old_size, int new_size)
     if (!new_ptr)
         return (free(ptr), NULL);
     copy_size = old_size < new_size ? old_size : new_size;
-    copy_bytes((char *)ptr, (char *)new_ptr, copy_size);
+    copy_bytes((uint8_t *)new_ptr, (uint8_t *)ptr, copy_size);
     free(ptr);
     return (new_ptr);
 }

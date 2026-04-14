@@ -22,6 +22,7 @@
     void    *ft_realloc(void *ptr, int old_size, int new_size);
     int     ft_putstr(const char *s, int fd);
     void    print_hex(char *label, uint32_t val);
+    void    copy_bytes(uint8_t *dst, uint8_t *src, int size);
 
     // Utils functions for serializing bytes into blocks
     void     serialize_bytes(t_serial *s, uint8_t *src, uint64_t size);

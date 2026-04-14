@@ -36,6 +36,22 @@
         # define SHA256_H6(ctx)     (ctx)->h[6]
         # define SHA256_H7(ctx)     (ctx)->h[7]
 
+        // rotation droite
+        # define SHA256_ROTR(x, n)  (((x) >> (n)) | ((x) << (32 - (n))))
+        // sigma schedule
+        # define SHA256_s0(x)  (SHA256_ROTR(x,7)  ^ SHA256_ROTR(x,18) ^ ((x) >> 3))
+        # define SHA256_s1(x)  (SHA256_ROTR(x,17) ^ SHA256_ROTR(x,19) ^ ((x) >> 10))
+        // Sigma rounds
+        # define SHA256_S0(x)  (SHA256_ROTR(x,2)  ^ SHA256_ROTR(x,13) ^ SHA256_ROTR(x,22))
+        # define SHA256_S1(x)  (SHA256_ROTR(x,6)  ^ SHA256_ROTR(x,11) ^ SHA256_ROTR(x,25))
+        // fonctions logiques
+        # define SHA256_CH(e,f,g)   (((e) & (f)) ^ (~(e) & (g)))
+        # define SHA256_MAJ(a,b,c)  (((a) & (b)) ^ ((a) & (c)) ^ ((b) & (c)))
+        // swap big-endian
+        # define SHA256_SWAP(x) \
+            (((x) >> 24) | (((x) >> 8) & 0x0000FF00) | \
+            (((x) << 8) & 0x00FF0000) | ((x) << 24))
+
         // SHA512 registres
         # define SHA512_H0(ctx)     (ctx)->h[0]
         # define SHA512_H1(ctx)     (ctx)->h[1]
