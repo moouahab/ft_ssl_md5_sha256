@@ -17,6 +17,13 @@ typedef union   u_block64
     uint64_t    words[16];
 }               t_block64;
 
+typedef union   u_block128
+{
+    uint8_t     bytes[128];
+    uint64_t    words[16];
+}               t_block128;
+
+
 typedef union   u_block_whirlpool
 {
     uint8_t     bytes[64];

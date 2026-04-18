@@ -1,13 +1,12 @@
 #include "args.h"
+#include "hash.h"
 
 bool    check_command(t_args *args, char *command)
 {
-    if (ft_strcmp(command, "md5") == 0 || ft_strcmp(command, "sha256") == 0)
-    {
-        args->command = command;
-        return (true);
-    }
-    return (false);
+    if (!is_valid_command(command))
+        return (false);
+    args->command = command;
+    return (true);
 }
 
 bool    check_flag(t_args *args, char *flag)
@@ -55,7 +54,7 @@ bool    add_string(t_args *args, char *string)
     if (args->strings_count == args->strings_capacity)
     {
         old_cap = args->strings_capacity;
-        args->strings_capacity = old_cap == 0 ? 4 : old_cap * 2;
+        args->strings_capacity = old_cap == 0 ? 8 : old_cap * 4;
         new_strings = ft_realloc(args->strings,
             sizeof(char *) * old_cap,
             sizeof(char *) * args->strings_capacity);
@@ -66,5 +65,3 @@ bool    add_string(t_args *args, char *string)
     args->strings[args->strings_count++] = string;
     return (true);
 }
-
-

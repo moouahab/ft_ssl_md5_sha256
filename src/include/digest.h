@@ -30,6 +30,22 @@ typedef union   u_sha256_regs
     uint32_t        r[8];
 }               t_sha256_regs;
 
+typedef union   u_sha512_regs
+{
+    struct
+    {
+        uint64_t    a;
+        uint64_t    b;
+        uint64_t    c;
+        uint64_t    d;
+        uint64_t    e;
+        uint64_t    f;
+        uint64_t    g;
+        uint64_t    h;
+    };
+    uint64_t        r[8];
+}               t_sha512_regs;
+
 typedef struct  s_sha256_ctx
 {
     t_block32   block;

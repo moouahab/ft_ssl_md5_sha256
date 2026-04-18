@@ -37,5 +37,9 @@ void    display_hash(t_display *disp, char *hash, char *label, bool is_file);
 // fonctions de calcul
 char    *compute_md5(t_input *input);
 char    *compute_sha256(t_input *input);
+char    *compute_sha512(t_input *input);
+
+bool    is_valid_command(char *command);
+void    print_commands(void);
 
 #endif

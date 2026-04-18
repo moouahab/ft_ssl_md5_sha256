@@ -1,30 +1,29 @@
 #include "algorithme.h"
-#include "sha256.h"
-#include "input.h"
+#include "sha512.h"
 #include "test_utils.h"
 
 /* ================================================================ */
-/* helpers                                                           */
+/* helper                                                            */
 /* ================================================================ */
 
 static char     *hash_string(char *str)
 {
-    t_sha256_ctx    *ctx;
+    t_sha512_ctx    *ctx;
     char            *hash;
-    uint64_t        len;
     int             i;
+    uint64_t        len;
 
     i = 0;
     while (str[i])
         i++;
     len = (uint64_t)i;
 
-    ctx = (t_sha256_ctx *)ft_calloc(1, sizeof(t_sha256_ctx));
+    ctx = (t_sha512_ctx *)ft_calloc(1, sizeof(t_sha512_ctx));
     if (!ctx)
         return (NULL);
-    sha256_init(ctx);
-    sha256_process(ctx, str, len);
-    hash = sha256(ctx);
+    sha512_init(ctx);
+    sha512_process(ctx, str, len);
+    hash = sha512(ctx);
     free(ctx);
     return (hash);
 }
@@ -43,7 +42,7 @@ static void     check_hash(char *label, char *input, char *expected)
     }
     ok = 1;
     i = 0;
-    while (i < 64)
+    while (i < 128)
     {
         if (got[i] != expected[i])
         {
@@ -71,11 +70,11 @@ static void     check_hash(char *label, char *input, char *expected)
 
 static void     test_null(void)
 {
-    check("sha256(NULL) = NULL       ", sha256(NULL) == NULL);
+    check("sha512(NULL) = NULL       ", sha512(NULL) == NULL);
 }
 
 /* ================================================================ */
-/* vecteurs RFC 6234 + vérifiés contre openssl                      */
+/* vecteurs RFC 6234 + vérifiés contre openssl sha512               */
 /* ================================================================ */
 
 static void     test_vectors(void)
@@ -83,47 +82,48 @@ static void     test_vectors(void)
     check_hash(
         "abc                       ",
         "abc",
-        "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        "ddaf35a193617abacc417349ae20413112e6fa4e89a97ea2"
+        "0a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd"
+        "454d4423643ce80e2a9ac94fa54ca49f"
     );
     check_hash(
         "vide                      ",
         "",
-        "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-    );
-    check_hash(
-        "abcdbcdecdefdefgefghfghighij",
-        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
-        "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1"
+        "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc"
+        "83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f"
+        "63b931bd47417a81a538327af927da3e"
     );
     check_hash(
         "The quick brown fox       ",
         "The quick brown fox jumps over the lazy dog",
-        "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592"
+        "07e547d9586f6a73f73fbac0435ed76951218fb7d0c8d788"
+        "a309d785436bbb642e93a252a954f23912547d1e8a3b5ed6"
+        "e1bfd7097821233fa0538f3db854fee6"
     );
     check_hash(
-        "1 char 'a'                ",
+        "1 char a                  ",
         "a",
-        "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb"
+        "1f40fc92da241694750979ee6cf582f2d5d7d28e18335de0"
+        "5abc54d0560e0f5302860c652bf08d560252aa5e74210546"
+        "f369fbbbce8c12cfc7957b2652fe9a75"
     );
     check_hash(
-        "55 chars                  ",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "9f4390f8d30c2dd92ec9f095b65e2b9ae9b0a925a5258e241c9f1e910f734318"
+        "111 chars aaaa...         ",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        "aaaaaaaaaaaaaaaaaaaaa",
+        "c0c27aea8dbe169c4cf25176cbf12db708fd6303db8cf94a1"
+        "cfb402c1680d3d68f39bc5b9a10970dd5373cb0fe1cb36fa5"
+        "0e33165140d72933ba87af9d5d1ffe"
     );
+
     check_hash(
-        "56 chars (bloc limite)    ",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "b35439a4ac6f0948b6d6f9e3c6af0f5f590ce20f1bde7090ef7970686ec6738a"
-    );
-    check_hash(
-        "64 chars (bloc plein)     ",
+        "128 chars (bloc plein)    ",
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "ffe054fe7ae0cb6dc65c3af9b61d5209f439851db43d0ba5997337df154668eb"
-    );
-    check_hash(
-        "65 chars                  ",
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "635361c48bb9eab14198e76ea8ab7f1a41685d6ad62aa9146d301d4f17eb0ae0"
+        "b73d1929aa615934e61a871596b3f3b33359f42b8175602e8"
+        "9f7e06e5f658a243667807ed300314b95cacdd579f3e33abdf"
+        "be351909519a846d465c59582f321"
     );
 }
 
