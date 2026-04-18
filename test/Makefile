@@ -12,15 +12,26 @@ SRCS_COMMON =   ../src/module/args/check_args.c             \
                 ../src/module/md5/md5_process.c             \
                 ../src/module/md5/md5_transform.c           \
                 ../src/module/md5/md5.c                     \
-				../src/module/sha256/sha256_init.c          \
+                ../src/module/sha256/sha256_init.c          \
                 ../src/module/sha256/sha256_transform.c     \
-				../src/module/sha256/sha256_process.c       \
-				../src/module/sha256/sha256_padding.c       \
-				../src/module/sha256/sha256.c               \
+                ../src/module/sha256/sha256_process.c       \
+                ../src/module/sha256/sha256_padding.c       \
+                ../src/module/sha256/sha256.c               \
+                ../src/module/sha512/sha512_init.c          \
+                ../src/module/sha512/sha512_transform.c     \
+                ../src/module/sha512/sha512_process.c       \
+                ../src/module/sha512/sha512_padding.c       \
+                ../src/module/sha512/sha512.c               \
                 ../src/module/input/input_from_string.c     \
                 ../src/module/input/input_from_fd.c         \
                 ../src/module/input/input_from_stdin.c      \
                 ../src/module/input/free_input.c            \
+                ../src/module/algohash/algo_md5.c           \
+                ../src/module/algohash/algo_sha256.c        \
+                ../src/module/algohash/algo_sha512.c        \
+                ../src/module/algohash/dispatch.c           \
+                ../src/module/algohash/run_hash.c           \
+                ../src/module/algohash/display_hash.c       \
                 ../src/module/utils/ft_calloc.c             \
                 ../src/module/utils/ft_realloc.c            \
                 ../src/module/utils/ft_strcmp.c             \
@@ -35,7 +46,9 @@ all: test_args test_serialize test_md5_init     \
      test_input test_display_hash			 	\
 	 test_sha256_init test_sha256_transform		\
 	 test_sha256_process test_sha256_padding	\
-	 test_sha256_final
+	 test_sha256_final	test_sha512_init		\
+	 test_sha512_transform test_sha512_process	\
+	 test_sha512_padding test_sha512_final
 
 test_args:
 	@echo "\n=== test_args ==="
@@ -135,6 +148,46 @@ test_sha256_final:
 		-o sha256/test_sha256_final
 	./sha256/test_sha256_final
 
+test_sha512_init:
+	@echo "\n=== test_sha512_init ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		sha512/test_sha512_init.c \
+		-o sha512/test_sha512_init
+	./sha512/test_sha512_init
+
+test_sha512_transform:
+	@echo "\n=== test_sha512_transform ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		sha512/test_sha512_transform.c \
+		-o sha512/test_sha512_transform
+	./sha512/test_sha512_transform
+
+test_sha512_process:
+	@echo "\n=== test_sha512_process ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		sha512/test_sha512_process.c \
+		-o sha512/test_sha512_process
+	./sha512/test_sha512_process
+
+test_sha512_padding:
+	@echo "\n=== test_sha512_padding ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		sha512/test_sha512_padding.c \
+		-o sha512/test_sha512_padding
+	./sha512/test_sha512_padding
+
+test_sha512_final:
+	@echo "\n=== test_sha512_final ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		sha512/test_sha512_final.c \
+		-o sha512/test_sha512_final
+	./sha512/test_sha512_final
+
 test_input:
 	@echo "\n=== test_input ==="
 	$(CC) $(CFLAGS) $(INCLUDES) \
@@ -147,7 +200,6 @@ test_display_hash:
 	@echo "\n=== test_display_hash ==="
 	$(CC) $(CFLAGS) $(INCLUDES) \
 		$(SRCS_COMMON) \
-		../src/module/algohash/display_hash.c \
 		algohash/test_display_hash.c \
 		-o algohash/test_display_hash
 	./algohash/test_display_hash
@@ -167,6 +219,11 @@ clean:
 	rm -f sha256/test_sha256_process
 	rm -f sha256/test_sha256_padding
 	rm -f sha256/test_sha256_final
+	rm -f sha512/test_sha512_init
+	rm -f sha512/test_sha512_transform
+	rm -f sha512/test_sha512_process
+	rm -f sha512/test_sha512_padding
+	rm -f sha512/test_sha512_final
 
 .PHONY: all clean                   	\
     test_args test_serialize        	\
@@ -178,4 +235,9 @@ clean:
 	test_sha256_transform				\
 	test_sha256_process					\
 	test_sha256_padding					\
-	test_sha256_final
+	test_sha256_final					\
+	test_sha512_init					\
+	test_sha512_transform				\
+	test_sha512_process					\
+	test_sha512_padding					\
+	test_sha512_final					\

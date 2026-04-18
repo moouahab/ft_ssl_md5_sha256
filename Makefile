@@ -32,6 +32,12 @@ SRCS    =   main.c                                      \
             src/module/sha256/sha256_process.c          \
             src/module/sha256/sha256_padding.c          \
             src/module/sha256/sha256.c                  \
+            src/module/sha512/sha512_init.c             \
+            src/module/sha512/sha512_transform.c        \
+            src/module/sha512/sha512_process.c          \
+            src/module/sha512/sha512_padding.c          \
+            src/module/sha512/sha512.c                  \
+            src/module/algohash/algo_sha512.c           \
             src/module/input/input_from_string.c        \
             src/module/input/input_from_fd.c            \
             src/module/input/input_from_stdin.c         \
