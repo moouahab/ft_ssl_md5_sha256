@@ -61,6 +61,7 @@ static void     display_stdin_hash(t_display *disp,
     }
     if (disp->print_stdin)
     {
+        // Ancienne version qui affiche ("abc")= hash
         ft_putstr("(\"", 1);
         ft_putstr(label, 1);
         ft_putstr("\")= ", 1);
@@ -91,8 +92,40 @@ static void     handle_stdin(t_display *disp)
     hash = disp->hasher->hash(input);
     if (!hash)
         return (free_input(input, true));
-    write_label(input->data, input->size, label, 4096);
-    display_stdin_hash(disp, hash, label);
+    
+    // NOUVELLE LOGIQUE pour le flag -p
+    if (disp->print_stdin)
+    {
+        // 1. Echo du contenu brut
+        write(1, input->data, input->size);
+        
+        // 2. Ajouter newline si nécessaire
+        if (input->size == 0 || input->data[input->size - 1] != '\n')
+            write(1, "\n", 1);
+        
+        // 3. Afficher le hash
+        if (disp->quiet)
+        {
+            ft_putstr(hash, 1);
+            ft_putstr("\n", 1);
+        }
+        else if (disp->reverse)
+        {
+            ft_putstr(hash, 1);
+            ft_putstr(" (stdin)\n", 1);
+        }
+        else
+        {
+            print_stdin(disp, hash);
+        }
+    }
+    else
+    {
+        // ANCIENNE LOGIQUE pour les cas normaux
+        write_label(input->data, input->size, label, 4096);
+        display_stdin_hash(disp, hash, label);
+    }
+    
     free(hash);
     free_input(input, true);
 }
@@ -186,7 +219,6 @@ void    run_hash(t_args *args, t_hasher *hasher)
         handle_stdin(&disp);
     handle_strings(args, &disp);
     handle_files(args, &disp);
-    // ← si rien traité → lire stdin par défaut
     if (!disp.print_stdin
         && args->strings_count == 0
         && args->files_count == 0)

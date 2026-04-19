@@ -54,7 +54,7 @@ bool    add_string(t_args *args, char *string)
     if (args->strings_count == args->strings_capacity)
     {
         old_cap = args->strings_capacity;
-        args->strings_capacity = old_cap == 0 ? 8 : old_cap * 4;
+        args->strings_capacity = old_cap == 0 ? 4 : old_cap * 2;
         new_strings = ft_realloc(args->strings,
             sizeof(char *) * old_cap,
             sizeof(char *) * args->strings_capacity);

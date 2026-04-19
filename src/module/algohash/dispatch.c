@@ -1,9 +1,10 @@
 #include "hash.h"
 
-static const t_hasher   hashers[] = {
-    { "md5",    "MD5",      compute_md5    },
-    { "sha256", "SHA2-256", compute_sha256 },
-    { "sha512", "SHA2-512", compute_sha512 },
+static t_hasher     hashers[] = {
+    {"md5", "MD5", compute_md5},
+    {"sha256", "SHA2-256", compute_sha256},
+    {"sha512", "SHA2-512", compute_sha512},
+    {"whirlpool", "WHIRLPOOL", compute_whirlpool},
     {NULL, NULL, NULL}
 };
 

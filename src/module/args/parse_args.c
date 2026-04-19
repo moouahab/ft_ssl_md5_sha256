@@ -1,4 +1,5 @@
 #include "args.h"
+#include "hash.h"
 
 static void     print_usage(void)
 {
@@ -9,8 +10,18 @@ static void     print_invalid(char *cmd)
 {
     ft_putstr("ft_ssl: Error: '", 2);
     ft_putstr(cmd, 2);
-    ft_putstr("' is an invalid command.\n", 2);
-    ft_putstr("\nCommands:\nmd5\nsha256\n\nFlags:\n-p -q -r -s\n", 2);
+    ft_putstr("' is an invalid command.\n\nCommands:\n", 2);
+    print_commands();
+    ft_putstr("\nFlags:\n-p -q -r -s\n", 2);
+}
+
+static void     print_unknown_flag(t_args *args, char *flag)
+{
+    ft_putstr("ft_ssl: ", 2);
+    ft_putstr(args->command, 2);
+    ft_putstr(": unknown option -- ", 2);
+    ft_putstr(flag + 1, 2);
+    ft_putstr("\n", 2);
 }
 
 static bool     parse_flags(t_args *args, char **av, int *i)
@@ -23,7 +34,10 @@ static bool     parse_flags(t_args *args, char **av, int *i)
         if (!files_started && av[*i][0] == '-')
         {
             if (!check_flag(args, av[*i]))
+            {
+                print_unknown_flag(args, av[*i]);
                 return (false);
+            }
             if (args->flags.s)
             {
                 (*i)++;
@@ -44,7 +58,6 @@ static bool     parse_flags(t_args *args, char **av, int *i)
     }
     return (true);
 }
-
 
 t_args          *parse_args(int ac, char **av)
 {

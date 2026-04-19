@@ -22,6 +22,12 @@ SRCS_COMMON =   ../src/module/args/check_args.c             \
                 ../src/module/sha512/sha512_process.c       \
                 ../src/module/sha512/sha512_padding.c       \
                 ../src/module/sha512/sha512.c               \
+				../src/module/whirlpool/whirlpool_init.c    \
+				../src/module/whirlpool/whirlpool_transform.c \
+				../src/module/whirlpool/whirlpool_process.c   \
+				../src/module/whirlpool/whirlpool_padding.c   \
+				../src/module/whirlpool/whirlpool.c           \
+				../src/module/algohash/algo_whirlpool.c      \
                 ../src/module/input/input_from_string.c     \
                 ../src/module/input/input_from_fd.c         \
                 ../src/module/input/input_from_stdin.c      \
@@ -48,7 +54,10 @@ all: test_args test_serialize test_md5_init     \
 	 test_sha256_process test_sha256_padding	\
 	 test_sha256_final	test_sha512_init		\
 	 test_sha512_transform test_sha512_process	\
-	 test_sha512_padding test_sha512_final
+	 test_sha512_padding test_sha512_final		\
+	 test_whirlpool_init test_whirlpool_transform\
+	 test_whirlpool_padding test_whirlpool_process\
+
 
 test_args:
 	@echo "\n=== test_args ==="
@@ -188,6 +197,38 @@ test_sha512_final:
 		-o sha512/test_sha512_final
 	./sha512/test_sha512_final
 
+test_whirlpool_init:
+	@echo "\n=== test_whirlpool_init ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		whirlpool/test_whirlpool_init.c \
+		-o whirlpool/test_whirlpool_init
+	./whirlpool/test_whirlpool_init
+
+test_whirlpool_transform:
+	@echo "\n=== test_whirlpool_transform ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		whirlpool/test_whirlpool_transform.c \
+		-o whirlpool/test_whirlpool_transform
+	./whirlpool/test_whirlpool_transform
+
+test_whirlpool_padding:
+	@echo "\n=== test_whirlpool_padding ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		whirlpool/test_whirlpool_padding.c \
+		-o whirlpool/test_whirlpool_padding
+	./whirlpool/test_whirlpool_padding
+
+test_whirlpool_process:
+	@echo "\n=== test_whirlpool_process ==="
+	$(CC) $(CFLAGS) $(INCLUDES) \
+		$(SRCS_COMMON) \
+		whirlpool/test_whirlpool_process.c \
+		-o whirlpool/test_whirlpool_process
+	./whirlpool/test_whirlpool_process
+
 test_input:
 	@echo "\n=== test_input ==="
 	$(CC) $(CFLAGS) $(INCLUDES) \
@@ -224,6 +265,10 @@ clean:
 	rm -f sha512/test_sha512_process
 	rm -f sha512/test_sha512_padding
 	rm -f sha512/test_sha512_final
+	rm -f whirlpool/test_whirlpool_init
+	rm -f whirlpool/test_whirlpool_transform
+	rm -f whirlpool/test_whirlpool_padding
+	rm -f whirlpool/test_whirlpool_process
 
 .PHONY: all clean                   	\
     test_args test_serialize        	\
@@ -241,3 +286,7 @@ clean:
 	test_sha512_process					\
 	test_sha512_padding					\
 	test_sha512_final					\
+	test_whirlpool_init					\
+	test_whirlpool_transform			\
+	test_whirlpool_padding				\
+	test_whirlpool_process

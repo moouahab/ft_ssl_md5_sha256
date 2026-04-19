@@ -62,6 +62,23 @@ typedef struct  s_sha512_ctx
     uint64_t    h[8];
 }               t_sha512_ctx;
 
+typedef union   u_wp_state
+{
+    uint8_t     bytes[64];
+    uint8_t     m[8][8];
+    uint64_t    rows[8];
+}               t_wp_state;
+
+typedef struct  s_whirlpool_ctx
+{
+    t_wp_state  state;
+    t_wp_state  block;
+    uint64_t    used;
+    uint64_t    msg_size;
+    uint8_t     sbox[256];
+    t_wp_state  c[10];
+}               t_whirlpool_ctx;
+
 
 
 #endif
