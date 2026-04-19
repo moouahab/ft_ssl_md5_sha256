@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ================================================================
-# test_ft_ssl_sha512.sh — Comparaison ft_ssl sha512 vs openssl
+# test_ft_ssl_sha512.sh — Tests SHA512 avec nouveau format -p
 # Usage : ./test_ft_ssl_sha512.sh [chemin vers ft_ssl]
 # ================================================================
 
@@ -13,10 +13,6 @@ TOTAL=0
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 RESET='\033[0m'
-
-# ================================================================
-# helpers
-# ================================================================
 
 check()
 {
@@ -73,10 +69,6 @@ cleanup()
     rm -f /tmp/ft_ssl_test_129a
 }
 
-# ================================================================
-# SHA-512 STDIN — comparaison directe openssl vs ft_ssl
-# ================================================================
-
 test_sha512_stdin()
 {
     echo "=== SHA512 STDIN ==="
@@ -118,35 +110,27 @@ test_sha512_stdin()
         "$(echo -n "pity those that aren't following baerista on spotify." | openssl sha512)"
 }
 
-# ================================================================
-# SHA-512 FLAG -s
-# ================================================================
-
 test_sha512_flag_s()
 {
     echo ""
     echo "=== SHA512 FLAG -s ==="
 
-    check "-s abc hash" \
-        "$(echo -n "abc" | $FT_SSL sha512 -q)" \
-        "$(echo -n "abc" | openssl sha512 | awk '{print $2}')"
+    check "-s abc" \
+        "$($FT_SSL sha512 -s "abc")" \
+        "SHA2-512(\"abc\")= $(echo -n "abc" | openssl sha512 | awk '{print $2}')"
 
-    check "-s foo hash" \
-        "$(echo -n "foo" | $FT_SSL sha512 -q)" \
-        "$(echo -n "foo" | openssl sha512 | awk '{print $2}')"
+    check "-s foo" \
+        "$($FT_SSL sha512 -s "foo")" \
+        "SHA2-512(\"foo\")= $(echo -n "foo" | openssl sha512 | awk '{print $2}')"
 
-    check "-s vide hash" \
-        "$(echo -n "" | $FT_SSL sha512 -q)" \
-        "$(echo -n "" | openssl sha512 | awk '{print $2}')"
+    check "-s vide" \
+        "$($FT_SSL sha512 -s "")" \
+        "SHA2-512(\"\")= $(echo -n "" | openssl sha512 | awk '{print $2}')"
 
-    check "-s pity... hash" \
-        "$(echo -n "pity those that aren't following baerista on spotify." | $FT_SSL sha512 -q)" \
-        "$(echo -n "pity those that aren't following baerista on spotify." | openssl sha512 | awk '{print $2}')"
+    check "-s pity..." \
+        "$($FT_SSL sha512 -s "pity those that aren't following baerista on spotify.")" \
+        "SHA2-512(\"pity those that aren't following baerista on spotify.\")= $(echo -n "pity those that aren't following baerista on spotify." | openssl sha512 | awk '{print $2}')"
 }
-
-# ================================================================
-# SHA-512 FLAG -q
-# ================================================================
 
 test_sha512_flag_q()
 {
@@ -168,33 +152,29 @@ test_sha512_flag_q()
     check "-q fichier 128 chars" \
         "$($FT_SSL sha512 -q /tmp/ft_ssl_test_128a)" \
         "$(openssl sha512 /tmp/ft_ssl_test_128a | awk '{print $2}')"
-}
 
-# ================================================================
-# SHA-512 FLAG -r
-# ================================================================
+    check "-q -s abc" \
+        "$($FT_SSL sha512 -q -s "abc")" \
+        "$(echo -n "abc" | openssl sha512 | awk '{print $2}')"
+}
 
 test_sha512_flag_r()
 {
     echo ""
     echo "=== SHA512 FLAG -r ==="
 
-    check "-r fichier hash" \
-        "$($FT_SSL sha512 -r /tmp/ft_ssl_test_file | awk '{print $1}')" \
-        "$(openssl sha512 /tmp/ft_ssl_test_file | awk '{print $2}')"
+    check "-r fichier" \
+        "$($FT_SSL sha512 -r /tmp/ft_ssl_test_file)" \
+        "$(openssl sha512 /tmp/ft_ssl_test_file | awk '{print $2}') /tmp/ft_ssl_test_file"
 
-    check "-r -s foo hash" \
-        "$($FT_SSL sha512 -r -s "foo" | awk '{print $1}')" \
-        "$(echo -n "foo" | openssl sha512 | awk '{print $2}')"
+    check "-r -s foo" \
+        "$($FT_SSL sha512 -r -s "foo")" \
+        "$(echo -n "foo" | openssl sha512 | awk '{print $2}') \"foo\""
 
-    check "-r stdin hash" \
-        "$(echo -n "abc" | $FT_SSL sha512 -r | awk '{print $1}')" \
-        "$(echo -n "abc" | openssl sha512 | awk '{print $2}')"
+    check "-r stdin" \
+        "$(echo -n "abc" | $FT_SSL sha512 -r)" \
+        "$(echo -n "abc" | openssl sha512 | awk '{print $2}') (stdin)"
 }
-
-# ================================================================
-# SHA-512 FICHIERS — comparaison directe openssl vs ft_ssl
-# ================================================================
 
 test_sha512_files()
 {
@@ -224,71 +204,161 @@ test_sha512_files()
     check_manual "fichier inexistant" \
         "ft_ssl: sha512: /tmp/inexistant: No such file or directory" \
         "$($FT_SSL sha512 /tmp/inexistant 2>&1)"
-}
 
-# ================================================================
-# SHA-512 FLAG -p
-# ================================================================
+    check "plusieurs fichiers nb lignes" \
+        "$($FT_SSL sha512 /tmp/ft_ssl_test_file /tmp/ft_ssl_test_website | wc -l)" \
+        "$(openssl sha512 /tmp/ft_ssl_test_file /tmp/ft_ssl_test_website | wc -l)"
+}
 
 test_sha512_flag_p()
 {
     echo ""
     echo "=== SHA512 FLAG -p ==="
 
-    check "-p abc hash correct" \
-        "$(echo -n "abc" | $FT_SSL sha512 -p | awk -F'= ' '{print $2}')" \
-        "$(echo -n "abc" | openssl sha512 | awk '{print $2}')"
+    # Test que -p affiche bien 2 lignes
+    check "-p abc nb lignes" \
+        "$(echo -n "abc" | $FT_SSL sha512 -p | wc -l)" \
+        "2"
 
-    check "-p avec newline hash correct" \
-        "$(echo "42 is nice" | $FT_SSL sha512 -p | awk -F'= ' '{print $2}')" \
-        "$(echo "42 is nice" | openssl sha512 | awk '{print $2}')"
+    # Test que la première ligne est bien le contenu
+    check "-p abc ligne 1" \
+        "$(echo -n "abc" | $FT_SSL sha512 -p | sed -n '1p')" \
+        "abc"
+
+    # Test que la deuxième ligne contient le bon hash
+    check "-p abc hash" \
+        "$(echo -n "abc" | $FT_SSL sha512 -p | sed -n '2p')" \
+        "SHA2-512(stdin)= $(echo -n "abc" | openssl sha512 | awk '{print $2}')"
+
+    # Test avec newline
+    check "-p avec newline nb lignes" \
+        "$(echo "42 is nice" | $FT_SSL sha512 -p | wc -l)" \
+        "2"
+
+    check "-p avec newline ligne 1" \
+        "$(echo "42 is nice" | $FT_SSL sha512 -p | sed -n '1p')" \
+        "42 is nice"
+
+    check "-p avec newline hash" \
+        "$(echo "42 is nice" | $FT_SSL sha512 -p | sed -n '2p')" \
+        "SHA2-512(stdin)= $(echo "42 is nice" | openssl sha512 | awk '{print $2}')"
+
+    # Test -p avec fichier
+    check "-p + fichier nb lignes" \
+        "$(echo "be sure" | $FT_SSL sha512 -p /tmp/ft_ssl_test_file | wc -l)" \
+        "3"
 
     check "-p + fichier hash stdin" \
-        "$(echo "be sure" | $FT_SSL sha512 -p /tmp/ft_ssl_test_file | head -1 | awk -F'= ' '{print $2}')" \
-        "$(echo "be sure" | openssl sha512 | awk '{print $2}')"
+        "$(echo "be sure" | $FT_SSL sha512 -p /tmp/ft_ssl_test_file | sed -n '2p')" \
+        "SHA2-512(stdin)= $(echo "be sure" | openssl sha512 | awk '{print $2}')"
 
     check "-p + fichier hash fichier" \
-        "$(echo "be sure" | $FT_SSL sha512 -p /tmp/ft_ssl_test_file | tail -1 | awk -F'= ' '{print $2}')" \
-        "$(openssl sha512 /tmp/ft_ssl_test_file | awk '{print $2}')"
+        "$(echo "be sure" | $FT_SSL sha512 -p /tmp/ft_ssl_test_file | tail -1)" \
+        "$(openssl sha512 /tmp/ft_ssl_test_file)"
 }
-
-# ================================================================
-# SHA-512 COMBINAISONS
-# ================================================================
 
 test_sha512_combinations()
 {
     echo ""
     echo "=== SHA512 COMBINAISONS ==="
 
+    check "-p -r nb lignes" \
+        "$(echo "but eventually" | $FT_SSL sha512 -p -r /tmp/ft_ssl_test_file | wc -l)" \
+        "3"
+
     check "-p -r stdin hash" \
-        "$(echo "but eventually" | $FT_SSL sha512 -p -r /tmp/ft_ssl_test_file | head -1 | awk -F'= ' '{print $2}')" \
-        "$(echo "but eventually" | openssl sha512 | awk '{print $2}')"
+        "$(echo "but eventually" | $FT_SSL sha512 -p -r /tmp/ft_ssl_test_file | sed -n '2p')" \
+        "$(echo "but eventually" | openssl sha512 | awk '{print $2}') (stdin)"
 
     check "-p -r fichier hash" \
-        "$(echo "but eventually" | $FT_SSL sha512 -p -r /tmp/ft_ssl_test_file | tail -1 | awk '{print $1}')" \
-        "$(openssl sha512 /tmp/ft_ssl_test_file | awk '{print $2}')"
+        "$(echo "but eventually" | $FT_SSL sha512 -p -r /tmp/ft_ssl_test_file | tail -1)" \
+        "$(openssl sha512 /tmp/ft_ssl_test_file | awk '{print $2}') /tmp/ft_ssl_test_file"
 
-    check "-p -s foo hash stdin" \
-        "$(echo "GL HF" | $FT_SSL sha512 -p -s "foo" /tmp/ft_ssl_test_file | head -1 | awk -F'= ' '{print $2}')" \
-        "$(echo "GL HF" | openssl sha512 | awk '{print $2}')"
+    check "-p -s foo nb lignes" \
+        "$(echo "GL HF" | $FT_SSL sha512 -p -s "foo" /tmp/ft_ssl_test_file | wc -l)" \
+        "4"
 
-    check "-p -s foo hash -s" \
-        "$(echo "GL HF" | $FT_SSL sha512 -p -s "foo" /tmp/ft_ssl_test_file | sed -n '2p' | awk -F'= ' '{print $2}')" \
+    check "-p -s foo stdin hash" \
+        "$(echo "GL HF" | $FT_SSL sha512 -p -s "foo" /tmp/ft_ssl_test_file | sed -n '2p')" \
+        "SHA2-512(stdin)= $(echo "GL HF" | openssl sha512 | awk '{print $2}')"
+
+    check "-p -s foo string hash" \
+        "$(echo "GL HF" | $FT_SSL sha512 -p -s "foo" /tmp/ft_ssl_test_file | sed -n '3p')" \
+        "SHA2-512(\"foo\")= $(echo -n "foo" | openssl sha512 | awk '{print $2}')"
+
+    check "-q -p nb lignes" \
+        "$(echo -n "clear" | $FT_SSL sha512 -q -p | wc -l)" \
+        "2"
+
+    check "-q -p ligne 1" \
+        "$(echo -n "clear" | $FT_SSL sha512 -q -p | sed -n '1p')" \
+        "clear"
+
+    check "-q -p hash" \
+        "$(echo -n "clear" | $FT_SSL sha512 -q -p | tail -1)" \
+        "$(echo -n "clear" | openssl sha512 | awk '{print $2}')"
+
+    check "-r -q stdin" \
+        "$(echo -n "abc" | $FT_SSL sha512 -r -q)" \
+        "$(echo -n "abc" | openssl sha512 | awk '{print $2}')"
+
+    check "-r -q -s foo" \
+        "$($FT_SSL sha512 -r -q -s "foo")" \
         "$(echo -n "foo" | openssl sha512 | awk '{print $2}')"
-
-    check "-q -p content affiché" \
-        "$(echo -n "just to be extra clear" | $FT_SSL sha512 -q -p | head -1)" \
-        "just to be extra clear"
-
-    check "-q -p hash correct" \
-        "$(echo -n "just to be extra clear" | $FT_SSL sha512 -q -p | tail -1)" \
-        "$(echo -n "just to be extra clear" | openssl sha512 | awk '{print $2}')"
 }
 
-# ================================================================
-# résumé
-# ================================================================
+test_sha512_edge_cases()
+{
+    echo ""
+    echo "=== SHA512 EDGE CASES ==="
+
+    check "message 1 byte" \
+        "$(echo -n "a" | $FT_SSL sha512 -q)" \
+        "$(echo -n "a" | openssl sha512 | awk '{print $2}')"
+
+    check "message 2 bytes" \
+        "$(echo -n "ab" | $FT_SSL sha512 -q)" \
+        "$(echo -n "ab" | openssl sha512 | awk '{print $2}')"
+
+    check "message 111 bytes" \
+        "$(python3 -c "print('a'*111, end='')" | $FT_SSL sha512 -q)" \
+        "$(python3 -c "print('a'*111, end='')" | openssl sha512 | awk '{print $2}')"
+
+    check "message 112 bytes" \
+        "$(python3 -c "print('a'*112, end='')" | $FT_SSL sha512 -q)" \
+        "$(python3 -c "print('a'*112, end='')" | openssl sha512 | awk '{print $2}')"
+
+    check "message 113 bytes" \
+        "$(python3 -c "print('a'*113, end='')" | $FT_SSL sha512 -q)" \
+        "$(python3 -c "print('a'*113, end='')" | openssl sha512 | awk '{print $2}')"
+
+    check "caractères spéciaux" \
+        "$(echo -n "!@#$%^&*()_+-=[]{}|;:,.<>?" | $FT_SSL sha512 -q)" \
+        "$(echo -n "!@#$%^&*()_+-=[]{}|;:,.<>?" | openssl sha512 | awk '{print $2}')"
+}
+
+test_errors()
+{
+    echo ""
+    echo "=== ERREURS ==="
+
+    check_manual "no args" \
+        "usage: ft_ssl command [flags] [file/string]" \
+        "$($FT_SSL 2>&1)"
+
+    check_manual "commande invalide" \
+        "ft_ssl: Error: 'foobar' is an invalid command.
+
+Commands:
+md5
+sha256
+sha512
+whirlpool
+
+Flags:
+-p -q -r -s" \
+        "$($FT_SSL foobar 2>&1)"
+}
 
 summary()
 {
@@ -302,11 +372,13 @@ summary()
         echo "FAIL   : $FAIL"
     fi
     echo "================================"
+    
+    if [ $FAIL -eq 0 ]; then
+        echo -e "${GREEN}✓ Tous les tests passent !${RESET}"
+    else
+        echo -e "${RED}✗ $FAIL test(s) échoué(s)${RESET}"
+    fi
 }
-
-# ================================================================
-# main
-# ================================================================
 
 setup
 test_sha512_stdin
@@ -316,5 +388,9 @@ test_sha512_flag_r
 test_sha512_files
 test_sha512_flag_p
 test_sha512_combinations
+test_sha512_edge_cases
+test_errors
 summary
 cleanup
+
+exit $FAIL

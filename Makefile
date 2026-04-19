@@ -37,6 +37,12 @@ SRCS    =   main.c                                      \
             src/module/sha512/sha512_process.c          \
             src/module/sha512/sha512_padding.c          \
             src/module/sha512/sha512.c                  \
+            src/module/whirlpool/whirlpool_init.c          \
+            src/module/whirlpool/whirlpool_transform.c     \
+            src/module/whirlpool/whirlpool_process.c       \
+            src/module/whirlpool/whirlpool_padding.c       \
+            src/module/whirlpool/whirlpool.c               \
+            src/module/algohash/algo_whirlpool.c           \
             src/module/algohash/algo_sha512.c           \
             src/module/input/input_from_string.c        \
             src/module/input/input_from_fd.c            \
