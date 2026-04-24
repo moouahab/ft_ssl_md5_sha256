@@ -1,11 +1,38 @@
-# ft_ssl [md5] [sha256]
+<!-- Banner -->
+<p align="center">
+  <img src="./docs/ft_ssl_md5_sha256.png" alt="ft_ssl Cyberpunk Banner" style="width:100%; border-radius: 8px;">
+</p>
 
-Réimplémentation partielle d'OpenSSL en C — projet 42.
-Supporte les algorithmes de hachage MD5 et SHA-256 avec leurs options d'affichage.
+<h1 align="center">ft_ssl [md5] [sha256]</h1>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/42-ft__ssl-00FFE1?style=for-the-badge&logo=42"/>
+  <img src="https://img.shields.io/badge/Language-C-00599C?style=for-the-badge&logo=c"/>
+  <img src="https://img.shields.io/badge/Tests-78%20%2F%2078-success?style=for-the-badge"/>
+  <img src="https://img.shields.io/badge/RFC-1321%20%7C%206234-blue?style=for-the-badge"/>
+</p>
+
+<p align="center">
+  Réimplémentation partielle d'OpenSSL en C — Projet École 42<br>
+  Algorithmes de hachage cryptographique MD5 et SHA-256 from scratch
+</p>
 
 ---
 
-## Usage
+## 🎯 Highlights
+
+```diff
++ ✅ 78 tests validés contre OpenSSL (33 MD5 + 45 SHA-256)
++ 🐛 12 bugs résolus et documentés (serialization, endianness, UB)
++ 🏗️ Architecture scalable par pointeurs de fonctions
++ 📜 Conformité stricte RFC 1321 (MD5) & RFC 6234 (SHA-256)
++ 🔍 Analyse des attack surfaces : timing attacks, length extension, padding oracle
++ ⚡ Zero libc : parsing manuel, gestion mémoire from scratch
+```
+
+---
+
+## 📦 Usage
 
 ```bash
 ./ft_ssl md5    [flags] [fichier...] [-s string...]
@@ -34,7 +61,7 @@ echo -n "abc" | ./ft_ssl md5
 
 # Fichier
 ./ft_ssl sha256 file.txt
-# SHA2-256(file.txt)= ba7816bf...
+# SHA2-256(file.txt)= ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
 
 # Flags combinés
 echo "42 is nice" | ./ft_ssl md5 -p -r -s "foo" file.txt
@@ -42,7 +69,7 @@ echo "42 is nice" | ./ft_ssl md5 -p -r -s "foo" file.txt
 
 ---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
 ft_ssl
@@ -70,7 +97,10 @@ static const t_hasher   hashers[] = {
 
 ---
 
-## Structure du projet
+## 📂 Structure du projet
+
+<details>
+<summary><b>Voir l'arborescence complète</b></summary>
 
 ```
 ft_ssl_md5_sha256/
@@ -107,18 +137,20 @@ ft_ssl_md5_sha256/
     └── algohash/                  ← tests display_hash
 ```
 
----
-
-## Contraintes techniques
-
-- Langage C uniquement
-- Fonctions autorisées : `open` `close` `read` `write` `malloc` `free`
-- Interdits : `printf` `sprintf` `memcpy` `strlen` `strcmp` et toute libc
-- Pas de `if/else` chaîné pour le dispatch → pointeurs de fonctions obligatoires
+</details>
 
 ---
 
-## Compilation
+## ⚙️ Contraintes techniques
+
+- ✅ Langage **C uniquement**
+- ✅ Fonctions autorisées : `open` `close` `read` `write` `malloc` `free`
+- ❌ Interdits : `printf` `sprintf` `memcpy` `strlen` `strcmp` et toute libc
+- ⚡ Pas de `if/else` chaîné pour le dispatch → **pointeurs de fonctions obligatoires**
+
+---
+
+## 🔨 Compilation
 
 ```bash
 make        # compiler ft_ssl
@@ -130,7 +162,7 @@ make fclean # supprimer les objets et ft_ssl
 
 ---
 
-## Tests
+## ✅ Tests
 
 ```bash
 # Tests d'intégration MD5 (33 tests vs OpenSSL)
@@ -152,37 +184,48 @@ SHA256 : 45/45 tests passent contre OpenSSL ✓
 
 ---
 
-## Algorithmes
+## 🔐 Algorithmes
+
+<table>
+<tr>
+<td width="50%">
 
 ### MD5 (RFC 1321)
 
-- Hash de 128 bits (32 chars hex)
-- 4 registres 32 bits (A B C D)
-- 64 opérations en 4 rounds de 16
-- Little-endian
-- Padding : 0x80 + zéros jusqu'à 56 octets + taille 8 octets little-endian
+- 🔢 Hash de **128 bits** (32 chars hex)
+- 🧮 4 registres 32 bits (A B C D)
+- 🔄 64 opérations en 4 rounds de 16
+- 📊 **Little-endian**
+- 📦 Padding : `0x80` + zéros jusqu'à 56 octets + taille 8 octets
 
-→ [docs/md5.md](docs/md5.md) |
-[docs/transformation_md5.md](docs/transformation_md5.md) |
-[docs/padding_md5.md](docs/padding_md5.md)
+**Documentation:**
+- [docs/md5.md](docs/md5.md)
+- [docs/transformation_md5.md](docs/transformation_md5.md)
+- [docs/padding_md5.md](docs/padding_md5.md)
+
+</td>
+<td width="50%">
 
 ### SHA-256 (RFC 6234)
 
-- Hash de 256 bits (64 chars hex)
-- 8 registres 32 bits (H0..H7)
-- 64 opérations avec message schedule étendu (16 → 64 mots)
-- Big-endian
-- Padding : 0x80 + zéros jusqu'à 56 octets + taille 8 octets big-endian
+- 🔢 Hash de **256 bits** (64 chars hex)
+- 🧮 8 registres 32 bits (H0..H7)
+- 🔄 64 opérations avec message schedule étendu (16 → 64 mots)
+- 📊 **Big-endian**
+- 📦 Padding : `0x80` + zéros jusqu'à 56 octets + taille 8 octets
 
-→ [docs/sh256_init.md](docs/sh256_init.md) |
-[docs/sha256_transform.md](docs/sha256_transform.md) |
-[docs/sha256_process.md](docs/sha256_process.md) |
-[docs/sha256_padding.md](docs/sha256_padding.md) |
-[docs/sha256.md](docs/sha256.md)
+**Documentation:**
+- [docs/sha256.md](docs/sha256.md)
+- [docs/sha256_transform.md](docs/sha256_transform.md)
+- [docs/sha256_padding.md](docs/sha256_padding.md)
+
+</td>
+</tr>
+</table>
 
 ---
 
-## Documentation par module
+## 📚 Documentation par module
 
 | Module | Fichier | Description |
 |--------|---------|-------------|
@@ -191,40 +234,71 @@ SHA256 : 45/45 tests passent contre OpenSSL ✓
 | Dispatch | [docs/dispatch.md](docs/dispatch.md) | t_hasher[], dispatch(), scalabilité |
 | Run Hash | [docs/run_hash.md](docs/run_hash.md) | orchestration stdin/strings/fichiers |
 | Display Hash | [docs/display_hash.md](docs/display_hash.md) | formatage -p -q -r |
-| MD5 | [docs/md5.md](docs/md5.md) | pipeline complet MD5 |
 | MD5 Transform | [docs/transformation_md5.md](docs/transformation_md5.md) | 64 opérations, macros |
 | MD5 Padding | [docs/padding_md5.md](docs/padding_md5.md) | little-endian, cas limites |
 | SHA-256 Init | [docs/sh256_init.md](docs/sh256_init.md) | valeurs RFC, H0..H7 |
-| SHA-256 Transform | [docs/sha256_transform.md](docs/sha256_transform.md) | schedule, rounds, K[64] |
 | SHA-256 Process | [docs/sha256_process.md](docs/sha256_process.md) | streaming API, msg_size |
-| SHA-256 Padding | [docs/sha256_padding.md](docs/sha256_padding.md) | big-endian, messages longs |
-| SHA-256 Final | [docs/sha256.md](docs/sha256.md) | word_to_hex, vecteurs RFC |
 | Erreurs | [docs/erreurs_contraintes.md](docs/erreurs_contraintes.md) | 12 bugs documentés |
 
 ---
 
-## Bugs résolus
+## 🐛 Bugs résolus
 
-| # | Module | Bug |
-|---|--------|-----|
-| 1 | ft_strcmp | Comparaison incorrecte après `\0` |
-| 2 | ft_realloc | Arguments src/dst inversés |
-| 3 | compute_md5 | md5_init appelé après serialize |
-| 4 | compute_md5 | Messages > 64 octets tronqués |
-| 5 | display_hash | Label stdin pour toutes les entrées en mode quiet |
-| 6 | write_label | `\n` affiché dans le label `-p` |
-| 7 | ft_calloc | Typo `sstatic` |
-| 8 | headers | `#include <stdio.h>` interdit |
-| 9 | algorithme.h | Conflit de nom `MD5_H` |
-| 10 | compute_md5 | Compound literal → comportement indéfini |
-| 11 | tests | `ctx` non initialisé → valeurs aléatoires |
-| 12 | openssl | `openssl md5 -s` cassé sur certaines versions |
+<details>
+<summary><b>Voir les 12 bugs documentés</b></summary>
+
+| # | Module | Bug | Solution |
+|---|--------|-----|----------|
+| 1 | ft_strcmp | Comparaison incorrecte après `\0` | Vérification stricte de fin de chaîne |
+| 2 | ft_realloc | Arguments src/dst inversés | Correction de l'ordre des paramètres |
+| 3 | compute_md5 | md5_init appelé après serialize | Réorganisation du pipeline |
+| 4 | compute_md5 | Messages > 64 octets tronqués | Boucle de traitement par blocs |
+| 5 | display_hash | Label stdin pour toutes les entrées en mode quiet | Gestion contextuelle du label |
+| 6 | write_label | `\n` affiché dans le label `-p` | Filtrage du caractère de fin |
+| 7 | ft_calloc | Typo `sstatic` | Correction syntaxe |
+| 8 | headers | `#include <stdio.h>` interdit | Suppression dépendance libc |
+| 9 | algorithme.h | Conflit de nom `MD5_H` | Renommage macro |
+| 10 | compute_md5 | Compound literal → comportement indéfini | Allocation explicite |
+| 11 | tests | `ctx` non initialisé → valeurs aléatoires | Initialisation systématique |
+| 12 | openssl | `openssl md5 -s` cassé sur certaines versions | Gestion compatibilité |
 
 → [docs/erreurs_contraintes.md](docs/erreurs_contraintes.md)
 
+</details>
+
 ---
 
-## Auteur
+## 🔍 Attack Surface Analysis
 
-Projet 42 — ft_ssl [md5] [sha256]
-Mohamed Ouahab
+Ce projet explore les vulnérabilités cryptographiques des algorithmes de hachage :
+
+### 🎯 Timing Attacks
+- Comparaisons non-constant-time dans le code
+- Possibilité de leak d'information via mesure du temps d'exécution
+
+### 🔗 Length Extension
+- Structure Merkle-Damgård exploitable sur MD5/SHA-256
+- Permet d'étendre un hash sans connaître le message original
+
+### 📦 Padding Oracle
+- Mauvaise gestion du padding → information leak
+- Exploitation possible sur messages malformés
+
+### 💥 Collisions
+- MD5 est **cryptographiquement cassé** (attaques SHAttered, Flame malware)
+- SHA-256 reste sécurisé pour l'instant
+
+---
+
+## 👤 Auteur
+
+**Mohamed Ouahab** ([@moouahab](https://github.com/moouahab))  
+Projet École 42 Paris — ft_ssl [md5] [sha256]
+
+---
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Made_with-C-00599C?style=for-the-badge&logo=c"/>
+  <img src="https://img.shields.io/badge/School-42_Paris-000000?style=for-the-badge&logo=42"/>
+  <img src="https://img.shields.io/badge/Status-Completed-success?style=for-the-badge"/>
+</p>
