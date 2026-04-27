@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include "utils.h"
 
 typedef struct  s_flags
